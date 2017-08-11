@@ -73,12 +73,25 @@ export default {
 		_initSC(){
 			this.scrollPage = new BScroll(this.$refs.bodyDom, {click: true})
 		},
+    hasImg(){
+      let img = document.getElementsByTagName('img')
+      if(img.length>0){
+        // 有图片
+        img[0].onload = ()=> {
+          this._initSC()
+        }
+      }else {
+        // 无图片
+        return
+      }
+    }
   },
   mounted(){
     (async ()=> {
       await this.getHeight()
       await this.resize()
       await this._initSC()
+      await this.hasImg()
     })()
   }
 }
@@ -95,8 +108,6 @@ export default {
   width: 100%;
   top: 0;
   bottom: 0;
-  /*left: 50%;
-  transform: translate(-50%);*/
 }
 .header {
   height: 40px;

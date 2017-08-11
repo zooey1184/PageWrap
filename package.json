@@ -4,6 +4,7 @@
   "description": "A Vue.js project",
   "author": "zooey1184 <1184762165@qq.com>",
   "private": false,
+  "main": "dist/pagewrap.min.js",
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
