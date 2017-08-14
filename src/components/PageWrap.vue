@@ -1,5 +1,5 @@
 <template>
-  <div class="pageWrap">
+  <div class="pageWrap" v-touch:swiperight="right">
     <nav class="header underline" ref="header" >
       <slot name="header">
         <div class="back" @click='$router.back()'>
@@ -84,6 +84,9 @@ export default {
         // 无图片
         return
       }
+    },
+    right(){
+      this.$router.back()
     }
   },
   mounted(){

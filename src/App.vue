@@ -1,50 +1,64 @@
 <template>
-  <div id="app">
-    <transition :name='animate' :mode='mode'>
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
-    </transition>
-  </div>
+<div id="app">
+  <transition :name='animate' :mode='mode'>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
+  </transition>
+</div>
 </template>
+
+
 
 <script>
 export default {
   name: 'app',
-  data: ()=> ({
+  data: () => ({
     routerList: ["/"],
     animate: 'none',
     mode: 'in-out'
   }),
   watch: {
-    $route: function(n, o){
+    $route: function(n, o) {
       let rArr = this.routerList
-      if(this.routerList.length==0){
+      if (n.fullPath == "/") {
+        this.routerList = ["/"]
+        sessionStorage.setItem('routerList', JSON.stringify(['/']))
+      }
+      if (!!sessionStorage.getItem('routerList') && JSON.parse(sessionStorage.getItem('routerList')).length > 1) {
+        rArr = JSON.parse(sessionStorage.getItem('routerList'))
+      } else {
+        sessionStorage.setItem('routerList', JSON.stringify(this.routerList))
+      }
+      // let rArr = this.routerList
+      if (this.routerList.length == 0) {
         this.routerList.push(n.fullPath)
+        sessionStorage.setItem('routerList', JSON.stringify(this.routerList))
       }
       let arr = []
-      for(let a of rArr){
+      for (let a of rArr) {
         arr.push(a)
-        if(a==n.fullPath){
+        if (a == n.fullPath) {
           // back
-          this.animate = 'none'
-          this.mode = 'out-in'
+          this.animate = 'back'
+          this.mode = 'in-out'
           this.routerList = arr
+          sessionStorage.setItem('routerList', JSON.stringify(arr))
           return
-        }else {
+        } else {
           // go
-          this.animate = 'slideLeft'
+          this.animate = 'go'
           this.mode = 'in-out'
         }
       }
       this.routerList.push(n.fullPath)
-      if(n.fullPath==='/'){
-        this.routerList = ["/"]
-      }
+      sessionStorage.setItem('routerList', JSON.stringify(this.routerList))
     }
   }
 }
 </script>
+
+
 
 <style>
 * {
@@ -52,18 +66,22 @@ export default {
   padding: 0;
   line-height: 1;
 }
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 body {
   background: #f1f1f1;
 }
+
 /*下划线*/
 .underline {
   position: relative;
 }
+
 .underline::after {
   position: absolute;
   content: "";
@@ -75,36 +93,43 @@ body {
   transform: scaleY(0.5);
   transform-origin: 0 0;
 }
-/*向右滑*/
-.slideRight-enter-active {
-  transition: all .2s ease;
+
+/*前进*/
+.go-enter-active,
+.go-leave-active {
+  transition: all 0.3s ease;
 }
-.slideRight-leave-active {
-  transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+
+.go-enter,
+.go-leave-to {
+  transform: translateX(100%);
 }
-.slideRight-enter, .slideRight-leave-to {
-  transform: translateX(180px);
-  opacity: 0;
+
+/*后退*/
+.back-leave-active {
+  transition: all 0.3s ease;
+  z-index: 99
 }
-/*向左滑*/
-.slideLeft-enter-active {
-  transition: all .2s ease;
+
+.back-enter {
+  z-index: -1
 }
-.slideLeft-leave-active {
-  transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+
+.back-leave-to {
+  transform: translateX(100%);
 }
-.slideLeft-enter, .slideLeft-leave-to {
-  transform: translateX(180px);
-  opacity: 0;
-}
+
 /*淡入淡出*/
 .fade-enter-active {
   transition: all .2s ease;
 }
+
 .fade-leave-active {
   transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
-.fade-enter, .fade-leave-to {
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
